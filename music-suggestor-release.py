@@ -4,8 +4,8 @@ import elementpath
 import xml.etree.ElementTree as ET
 from spotipy.oauth2 import SpotifyClientCredentials
 from spotipy.oauth2 import SpotifyOAuth
-client_id = 'YOUR-CLIENT-ID'
-client_secret = 'YOUR-CLIENT-SECRET'
+client_id = 'YOUR CLIENT ID'
+client_secret = 'YOUR CLIENT SECRET'
 
 # Authenticate using the Client Credentials flow
 #client_credentials_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
@@ -34,7 +34,13 @@ sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=client_id,
 #names = [name.text for name in elementpath.select(root, "/toptags/tag/name")]
 #
 #print(type(names))  # Output: ['pop', 'dance']
-API = "YOUR LAST FM API KEY"
+
+
+
+
+
+
+API = "YOUR LASTFM API CODE"
 artist = input("Name the Artist for the song you are providing: ")
 artist = artist.lower()
 track = input("Provide the name of the track you are looking for: ")
@@ -46,6 +52,7 @@ for i in track:
         continue
 track = track.lower()
 
+
 link = f"http://ws.audioscrobbler.com/2.0/?method=track.gettoptags&artist={artist}&track={track}&api_key={API}"
 x = requests.post(link)
 x = x.text
@@ -54,16 +61,54 @@ root = ET.fromstring(x)
 genre = [name.text for name in elementpath.select(root, "/lfm/toptags/tag/name")]
 
 genre = genre[0]
-
+print(genre)
 link = f"http://ws.audioscrobbler.com/2.0/?method=track.getsimilar&artist={artist}&track={track}&api_key={API}"
 x = requests.post(link)
 x = x.text
+
 root = ET.fromstring(x)
+
 track_info = {}
 for track in root.findall(".//track"):
     track_name = track.find("name").text
     artist_name = track.find("artist/name").text
-    track_info[track_name]=artist_name
+
+    track_name = track_name.lower()
+    
+    for i in track_name:
+        if i == "`":
+            track_name = track_name.replace("`","")
+        elif i == ",":
+            track_name = track_name.replace(",","")
+        elif i == ".":
+            track_name = track_name.replace(".","")
+        elif i == "'":
+            track_name = track_name.replace("'","")
+    
+    for i in artist_name:
+        if i == "&":
+            artist_name = artist_name.replace("&", "")
+    
+
+
+    link = f"http://ws.audioscrobbler.com/2.0/?method=track.gettoptags&artist={artist_name}&track={track_name}&api_key={API}"
+    x = requests.post(link)
+    x = x.text
+
+
+
+
+  
+    root = ET.fromstring(x)
+    genre_test = [name.text for name in elementpath.select(root, "/lfm/toptags/tag/name")]
+    #print(genre_test)
+    if len(genre_test) == 0:
+        continue
+    genre_test = genre_test[0]
+    if genre == genre_test:
+        track_info[track_name]=artist_name
+    else:
+        continue
     # Store track name and artist in a dictionary and add it to the list
 
     
