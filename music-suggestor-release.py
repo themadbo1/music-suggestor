@@ -34,7 +34,7 @@ sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=client_id,
 #names = [name.text for name in elementpath.select(root, "/toptags/tag/name")]
 #
 #print(type(names))  # Output: ['pop', 'dance']
-API = "b7b1d12c880522c8bb6a796351653a32"
+API = "YOUR LAST FM API KEY"
 artist = input("Name the Artist for the song you are providing: ")
 artist = artist.lower()
 track = input("Provide the name of the track you are looking for: ")
